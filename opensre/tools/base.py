@@ -94,6 +94,8 @@ class BaseTool(ABC):
         so callers don't need to handle ValueError themselves.
         """
         if not self.is_available():
+            # NOTE: returning early here avoids confusing errors when a tool's
+            # dependencies are missing (e.g. a binary not on PATH).
             return ToolResult(
                 success=False,
                 error=f"Tool '{self.my_tool_name}' is not available in this environment.",
@@ -101,9 +103,5 @@ class BaseTool(ABC):
         try:
             params = self.extract_params(raw)
         except ValueError as exc:
-            return ToolResult(success=False, error=f"Parameter error: {exc}")
+            return ToolResult(success=False, error=str(exc))
         return self.run(params)
-
-    def __repr__(self) -> str:
-        available = self.is_available()
-        return f"<{self.__class__.__name__} name={self.my_tool_name!r} available={available}>"
