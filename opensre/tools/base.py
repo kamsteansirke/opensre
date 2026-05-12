@@ -95,7 +95,7 @@ class BaseTool(ABC):
         """
         if not self.is_available():
             # NOTE: returning early here avoids confusing errors when a tool's
-            # dependencies are missing (e.g. a binary not on PATH).
+            # dependencies aren't installed in the current environment.
             return ToolResult(
                 success=False,
                 error=f"Tool '{self.my_tool_name}' is not available in this environment.",
