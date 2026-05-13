@@ -94,12 +94,9 @@ class BaseTool(ABC):
         so callers don't need to handle ValueError themselves.
         """
         if not self.is_available():
-            # NOTE: I added this availability check so callers get a clear
-            # error message instead of a cryptic failure mid-run.
-            return ToolResult(
-                success=False,
-                error=f"Tool '{self.my_tool_name}' is not available in the current environment.",
-            )
+            # NOTE: returning early here avoids confusing errors when a tool's
+            # dependencies aren't installed in the current environment.
+            return ToolResult(success=False, error=f"Tool '{self.my_tool_name}' is not available in this environment.")
         try:
             params = self.extract_params(raw)
         except ValueError as exc:
